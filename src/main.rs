@@ -1,14 +1,17 @@
 use reqwest::Client;
 use scraper::{Html, Selector};
+// use futures::executor::block_on;
+
+async fn myfunc() {
 
 let client = Client::new();
 
-let mut res = client.get("http://books.toscrape.com/")
+let res = client.get("http://books.toscrape.com/")
 .send()
-.unwrap();
+.await.unwrap();
 
 // a try-catch to stop if there's an error or no text
-let body = res.text().unwrap();
+let body = res.text().await.unwrap();
 
 let document = Html::parse_document(&body);
 
@@ -28,6 +31,12 @@ for book_price in document.select(&book_price_selector) {
     println!("Price: {}", price[0]);
 }
 
-fn main() {
-    println!("Hello, world!");
 }
+#[tokio::main]
+async fn main(){
+    myfunc().await;
+}
+
+// fn main() {
+
+// }
